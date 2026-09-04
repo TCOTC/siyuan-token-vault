@@ -20,13 +20,13 @@
 
 ```json
 {
-  "devDependencies": {
+  "dependencies": {
     "siyuan-token-vault": "github:TCOTC/siyuan-token-vault#v0.1.0"
   }
 }
 ```
 
-> 提示：思源插件的 webpack 通常只编译插件自身 `src/`（`include` 限定），因此本库发布 `dist/` 预编译产物；消费方构建时该依赖会被直接打入插件 bundle，运行时无额外加载，集市包不含 `node_modules`，故放 `devDependencies` 即可。
+> 提示：思源插件的 webpack 通常只编译插件自身 `src/`（`include` 限定），因此本库发布 `dist/` 预编译产物；消费方构建时该依赖会被直接打入插件 bundle，运行时无额外加载，集市包不含 `node_modules`。
 
 ## 使用
 
