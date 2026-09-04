@@ -71,6 +71,28 @@ describe("createTokenVault", () => {
         expect(await vault.loadToken()).toBeNull();
     });
 
+    it("hasStoredToken 区分从未保存与密文损坏（同文件名场景）", async () => {
+        const storage = createMemoryStorage();
+        const vault = createTokenVault({seed, storage});
+        // 从未保存
+        expect(await vault.hasStoredToken()).toBe(false);
+        expect(await vault.loadToken()).toBeNull();
+
+        // 已保存（密文存在）
+        await vault.saveToken("ghp_secret");
+        expect(await vault.hasStoredToken()).toBe(true);
+
+        // 密文文件被损坏/篡改：hasStoredToken 仍为 true（文件有内容），loadToken 为 null
+        storage.store.set(await vault.fileName(), "v1.!!!.xx.yy");
+        expect(await vault.hasStoredToken()).toBe(true);
+        expect(await vault.loadToken()).toBeNull();
+
+        // 换 seed（换设备/工作空间语义）：文件名随之不同 → 找不到文件 → 与从未保存一致
+        const vaultB = createTokenVault({seed: "other|seed", storage});
+        expect(await vaultB.hasStoredToken()).toBe(false);
+        expect(await vaultB.loadToken()).toBeNull();
+    });
+
     it("种子不匹配（换设备语义）时 loadToken 返回 null", async () => {
         const storage = createMemoryStorage();
         const vaultA = createTokenVault({seed, storage});

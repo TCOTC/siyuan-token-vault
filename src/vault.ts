@@ -49,9 +49,15 @@ export interface TokenVault {
 
     /**
      * 从存储加载并解密 Token；成功后写入会话缓存。
-     * @returns 明文 Token；存储为空或解密失败时返回 null
+     * @returns 明文 Token；存储为空或解密失败时返回 null（需区分两者时先调 hasStoredToken）
      */
     loadToken(): Promise<string | null>;
+
+    /**
+     * 探测存储中是否已存在非空密文（不触发解密，也不修改会话缓存）。
+     * 用于区分 loadToken 返回 null 的两种情形：从未保存（hasStoredToken false）与解密失败（hasStoredToken true）。
+     */
+    hasStoredToken(): Promise<boolean>;
 
     /**
      * 删除存储中的密文并清空会话缓存。
@@ -105,6 +111,11 @@ export function createTokenVault(options: TokenVaultOptions): TokenVault {
             const token = await decryptToken(data.trim(), options.seed);
             cachedToken = token ?? "";
             return token;
+        },
+
+        async hasStoredToken(): Promise<boolean> {
+            const data = await options.storage.load(await fileName());
+            return typeof data === "string" && data.trim().length > 0;
         },
 
         async removeToken(): Promise<void> {

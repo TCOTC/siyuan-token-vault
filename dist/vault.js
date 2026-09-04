@@ -44,6 +44,10 @@ function createTokenVault(options) {
             cachedToken = token ?? "";
             return token;
         },
+        async hasStoredToken() {
+            const data = await options.storage.load(await fileName());
+            return typeof data === "string" && data.trim().length > 0;
+        },
         async removeToken() {
             await options.storage.remove(await fileName());
             cachedToken = "";
