@@ -1,6 +1,6 @@
 {
   "name": "siyuan-token-vault",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "SiYuan 插件共用加密 Token 存储：设备特征种子 + PBKDF2 + AES-GCM，密文版本化落盘",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
